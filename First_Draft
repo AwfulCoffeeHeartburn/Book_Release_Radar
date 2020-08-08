@@ -1,0 +1,86 @@
+### For now:
+# Compile a list of books and their release dates
+# Configure the program to notify the user One month prior, one day prior, and on the day of release with the books
+# name and the name of the author displayed.
+# Schedule the program to run automatically.
+
+### For later:
+# Have the program webscrape for updates to book release datesand automatically update.
+# Have the program notify the user when a release date changes.
+# Add feature to display completed, or "conquered" books, and if the user adds it the date they were "conquered".
+
+# 1: Acquire books and their release dates and place them in a plain-text file.
+# 2: Create dictionary for data to be read into
+# 3: Read data into dictionary
+# 4: Code the reminder portion of the program
+# 5: Configure the program to run when the machine starts and every x hours while the machine is active.
+
+# I'll need the datetime API for release dates and for telling hte program when to run
+
+books = {}
+
+def dict_from_file():
+    with open("Book_release_dates") as file:
+        for line in file.readlines():
+            month, day, year, *title = line.split()
+            books[str(title).lower().strip("[]").replace("'", "").replace(",", "")] = \
+                str(month) + "/" + str(day) + "/" + str(year)
+            # It's stripping from the ends of the string but not the stuff in the middle. How do I get it to
+            # take out ALL the commas and apostrophes?
+            # Answer: User .replace() instead of .strip(). .replace() takes out ALL of the specified character,
+            # while .strip() just removes the specified characters from the beginning and end of a string.
+
+    display_data()
+
+
+def display_data():
+    for key, value in books.items():
+        print(f"{key.title()} is due to be released {value}")
+        # It's storing the values as a tuple and that appears to be a problem.
+        # How can I get it to display the name without the brackets and apostrophe's
+        #       To do the above I used the .strip() method. There may be a more elegant way to accomplish
+        #       removing the apostrophes and brackets but for now I'm going with strip even though it looks
+        #       a bit clunky.
+        # How can I configure it so I can search the name without being forced to
+        # include brackets and apostrophe's.
+        #       One more, for the above I used .strip()
+        # So what do I really need to do here? Make it so the program can check the date and compare it to a list of
+        # dates, then if that date matches one of the values in the books dictionary, send a notification to the user.
+
+    while True:
+        book = input("What book are you searching for? Press 'q' to quit.").lower()
+        if book in books:
+            print(f"{book.title()} is due to be released {books[book]}")
+        elif book == 'q':
+            break
+        else:
+            print(f"{book} is not in the database.")
+
+
+dict_from_file()
+
+# If I can get the keys to be displayed without the apostrophe's and commas, just as one uninterrupted string,
+# it may become possible for the program to perform the lookup function on the dictionary. Is the date stored as
+# one value? Or is it stored in multiple values each associated with one key? Is that relevant right now?
+# I need to get the keys to be searchable somehow, and then configure the program so that it automatically checks
+# the dates - which are stored as the values in the dictionary -  to determine if the release date is coming up.
+# That part shouldn't be too hard since I've done something similar to that before in a Birthday reminder app.
+# So the main thing now is making sure the VALUES are searchable, and that the keys will be displayed in a user-friendly
+# way. Then, configure the program to that new items can be added to the dictionary via the file containing the data.
+# It might also be good to add a feature that terminates items from the file if the user indicates they have made the
+# purchase or are no longer interested.
+
+# So for the immediate future:
+# 1: Make keys, values searchable
+# 2: Have the results displayed in a user-friendly way
+# 3: Automate the searches with datetime/device-startup
+# 4: Create an add-item feature
+# 5: Create a remove item feature that contains a prompt asking the user if they'd like to terminate the item.
+# 6: Move on to the more advanced 'For Later' features listed above.
+
+# Re-organizing
+# So, now I need to:
+# Create feature that adds new books and their release dates to the dictionary
+# Perform a reverse look-up where the dates from the dictionary are compiled into a list.
+# This list must be regularly compared with the dates, and if there is a match a notification must be sent to the user.
+# This checks needs to be scheduled to run automatically. Maybe on machine start-up and/or every 12 hours or so.
