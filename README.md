@@ -1,3 +1,4 @@
 # Release_Radar
+THIS IS NOT THE MOST RECENT UPDATE. That was a poor naming decision.
 Initially this was a a program designed to notify the user when it was the release date of books in a data file, or when the release date of the books was approaching. I have modified the program to be an all-purpose event tracker. The user can put in book release dates, birthdays, holiday, work commitments, items from a to-do list, etc. I may add in the ability to input specific times later.
 It may be noted that some of the code and descriptions present here are also present in my fun projects repository. I've copied them here, and intend to do any expanding of them here because it occurred to me that the projects I've been working on each likely warrant their own repositories. This is me attempting to facilitate better organizational skills within myself.
