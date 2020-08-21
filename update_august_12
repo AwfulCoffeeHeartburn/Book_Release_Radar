@@ -1,0 +1,99 @@
+import os
+import time
+import sys
+from datetime import datetime
+
+events = {}
+dates = []
+
+
+
+def main():
+    dict_from_file()
+    #display_data()
+    #search_data()
+    #add_book()
+    check_dates()
+    # book = input("Name of book please.")
+    #remove_book(book)
+
+
+
+def dict_from_file():
+    with open('/home/pilot/PycharmProjects/PilotPyCharm/venv/Personal_Projects/Events') as file:
+        for line in file.readlines():
+            release_date, *title = line.split()
+            events[str(title).lower().strip("[]").replace("'", "").replace(",", "")] = str(release_date)
+        for key, value in events.items():
+            dates.append(value)
+
+
+#def display_data():
+#    for key, value in books.items():
+#        print(f"{key.title()} is due to be released {value}")
+
+
+#def search_data():
+#    while True:
+#        book = input("What book are you searching for? Press 'q' to quit.").lower()
+#        if book == 'q':
+#            break
+#        else:
+#            for key, value in books.items():
+#                if book in key:
+#                    print(f"{str(key)} is due to be released {str(books[key])}")
+#                else:
+#                    print(f"{str(book)} is not in the database. Perhaps check the spelling. Please use full names:"
+#                          f" Aoe Abercrombie rather than j abercrombie, etc.")
+#                    break
+
+
+def add_item(new_event, date):
+    with open('/home/pilot/PycharmProjects/PilotPyCharm/venv/Personal_Projects/Events', "a") as file:
+        events[new_event] = str(date)
+        file.write(str(date) + " " + str(new_event) + "\n")
+        #sys.stdout.flush()
+        #os.fsync(file.fileno())
+
+def remove_item(event):
+    for key, value in events.items():
+        if event in key:
+            events.pop(key)
+            rewrite_dict()
+            break
+
+
+def rewrite_dict():
+    with open('/home/pilot/PycharmProjects/PilotPyCharm/venv/Personal_Projects/Events', "w") as file:
+        for key, value in events.items():
+            file.writelines(f"{str(value)} {str(key).lower()}\n")
+
+
+def check_dates():
+    with open('/home/pilot/PycharmProjects/PilotPyCharm/venv/Personal_Projects/Events', "r") as file:
+        flag = False
+        today = time.strftime('%m-%d-%y')
+        birthday = time.strftime('%m-%d')
+        for line in file:
+            if today in line:
+                date, *event = line.split()
+                event1 = str(event).strip('[]').replace(",", "").replace("'", "")
+                flag = True
+                os.system(f'notify-send "{str(event1)} is occurring on: {str(date)}"')
+                # The reasoning for the two separate if statements is this: Since the birth years on the list
+                # will never occur again the program can safely search the file according to month and date
+                # instead of according to month, date and year. Anything that is identified by just month
+                # and date can be assumed to be a birthday. Consequently, we can provide different messages this way.
+                # We can also include a few lines calculating the age of the individual in question.
+            if birthday in line:
+                flag = True
+                date, *event = line.split()
+                event1 = str(event).strip('[]').replace(",", "").replace("'", "")
+                year = datetime.now().year
+                age = int(year) - int(date[slice(6, 10)])
+                os.system(f"notify-send '{str(event1)} is coming up'.")
+        if not flag:
+            os.system('notify-send "There are no upcoming events."')
+
+
+main()
