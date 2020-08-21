@@ -17,7 +17,7 @@ class event_radar:
         self.create_btns()
         self.create_to_do_btns()
         self.add_to_to_do()
-        #self.event_alert()
+        self.event_alert()
 
         self._main_window.mainloop()
 
@@ -80,8 +80,12 @@ class event_radar:
 
     def event_alert(self):
         self._message_box = tkinter.messagebox
-        self._message_box.showinfo("Alert", f"{str(notification())}")
-        self._message_box.showinfo("Alert", f"{str(check_early_reminder())}")
+        if notification():
+            holder1, holder2 = notification()
+            self._message_box.showinfo("ATTENTION", f"{str(holder2)}")
+        #if check_early_reminder():
+        #    switch, message = check_early_reminder()
+        #    self._message_box.showinfo("ATTENTION", f"{str(message)}")
 
     def create_to_do_list(self):
         self._to_do_frame = tkinter.Frame(self._main_window)
@@ -122,3 +126,4 @@ class event_radar:
         self._to_do_entry.delete(0, 'end')
         self._title_entry.delete(0, 'end')
         self._release_entry.delete(0, 'end')
+
