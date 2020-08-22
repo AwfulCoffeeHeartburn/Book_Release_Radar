@@ -1,6 +1,8 @@
 import tkinter
 import tkinter.messagebox
-from event_reminder import *
+
+from imported_functions import *
+from to_do_functions import *
 
 
 class event_radar:
@@ -9,45 +11,73 @@ class event_radar:
         self._main_window.title("Schedule Radar")
 
         self.create_item_list()
+        self.create_to_do_list()
         self.add_new_item()
-        self.create_add_btn()
-        self.create_remove_button()
-        self.create_exit_btn()
+        self.add_to_do_item()
+        #self.create_exit_btn()
+        #self.create_remove_button()
+        self.create_btns()
+        self.create_to_do_btns()
         self.event_alert()
 
         self._main_window.mainloop()
 
     def create_item_list(self):
         self._item_frame = tkinter.Frame(self._main_window)
-        self._item_frame.pack()
+        self._item_frame.pack(side='left')
         self._book_listbox = tkinter.Listbox(self._item_frame, height=25, width=55)
         for key, value in events.items():
             self._book_listbox.insert(tkinter.END, key.title(), value)
-        self._book_listbox.pack(side='left', padx=35, pady=40)
+        self._book_listbox.pack(side='top', padx=35, pady=40)
 
-    def create_add_btn(self):
-        self._add_btn = tkinter.Button(self._main_window, text='Add', command=self.add_to_dictionary)
-        self._add_btn.pack(pady=5)
+    def create_to_do_list(self):
+        self._to_do_frame = tkinter.Frame(self._main_window)
+        self._to_do_frame.pack(side='right')
+        self._to_do_box = tkinter.Listbox(self._to_do_frame, height=25, width=55)
+        for key, value in to_do_list.items():
+            self._to_do_box.insert(tkinter.END, key.title(), value)
+        self._to_do_box.pack(side='top', padx=35, pady=40)
 
-    def create_exit_btn(self):
-        self._exit_btn = tkinter.Button(self._main_window, text='Exit', command=self._main_window.quit)
-        self._exit_btn.pack(pady=5)
+    def add_to_do_item(self):
+        self._title_frame = tkinter.Frame(self._to_do_frame)
+        self._title_frame.pack(side='top')
+        self._title_label = tkinter.Label(self._title_frame, text="Name of Event:")
+        self._title_label.pack(side='left')
+        self._to_do_entry = tkinter.Entry(self._title_frame)
+        self._to_do_entry.pack(pady=15, padx=15, side='left')
+        self._release_label = tkinter.Label(self._title_frame, text="Must be done by:")
+        self._release_label.pack(side='left')
+        self._done_by_entry = tkinter.Entry(self._title_frame)
+        self._done_by_entry.pack(pady=15, padx=15, side='right')
 
-    def create_remove_button(self):
-        self._remove_btn = tkinter.Button(self._main_window, text='Remove Selection', command=self.remove_item)
-        self._remove_btn.pack(pady=5)
+    def create_btns(self):
+        self._exit_btn = tkinter.Button(self._item_frame, text='Exit', command=self._main_window.quit)
+        self._exit_btn.pack(side='bottom', pady=5)
+        self._remove_btn = tkinter.Button(self._item_frame, text='Remove Selection', command=self.remove_item)
+        self._remove_btn.pack(side='bottom', pady=5)
+        self._add_btn = tkinter.Button(self._item_frame, text='Add', command=self.add_to_dictionary)
+        self._add_btn.pack(side='bottom', pady=5)
+
+    def create_to_do_btns(self):
+        self._exit_btn = tkinter.Button(self._to_do_frame, text='Exit', command=self._main_window.quit)
+        self._exit_btn.pack(side='bottom', pady=5)
+        self._remove_btn = tkinter.Button(self._to_do_frame, text='Remove Selection', command=self.remove_item)
+        self._remove_btn.pack(side='bottom', pady=5)
+        self._add_btn = tkinter.Button(self._to_do_frame, text='Add', command=self.add_to_dictionary)
+        self._add_btn.pack(side='bottom', pady=5)
 
     def add_new_item(self):
-        self._title_frame = tkinter.Frame(self._main_window)
-        self._title_frame.pack(side='left')
+        self._title_frame = tkinter.Frame(self._item_frame)
+        self._title_frame.pack(side='top')
         self._title_label = tkinter.Label(self._title_frame, text="Name of Event:")
-        self._title_label.pack()
+        self._title_label.pack(side='left')
         self._title_entry = tkinter.Entry(self._title_frame)
-        self._title_entry.pack(pady=15, padx=15)
+        self._title_entry.pack(pady=15, padx=15, side='left')
         self._release_label = tkinter.Label(self._title_frame, text="Date of Event:")
-        self._release_label.pack()
+        self._release_label.pack(side='left')
         self._release_entry = tkinter.Entry(self._title_frame)
-        self._release_entry.pack(pady=15, padx=15)
+        self._release_entry.pack(pady=15, padx=15, side='right')
+
 
     '''
     def add_author(self):
