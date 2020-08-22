@@ -1,8 +1,6 @@
 from release_radar_guts import *
-#from book_release import check_dates
 
 def main():
     my_gui = release_radar()
-#    check_dates()
 
 main()

@@ -1,86 +1,188 @@
-### For now:
-# Compile a list of books and their release dates
-# Configure the program to notify the user One month prior, one day prior, and on the day of release with the books
-# name and the name of the author displayed.
-# Schedule the program to run automatically.
+import os
+import time
+import sys
+from datetime import datetime
 
-### For later:
-# Have the program webscrape for updates to book release datesand automatically update.
-# Have the program notify the user when a release date changes.
-# Add feature to display completed, or "conquered" books, and if the user adds it the date they were "conquered".
+events = {}
+upcoming_events = {}
+dates = []
 
-# 1: Acquire books and their release dates and place them in a plain-text file.
-# 2: Create dictionary for data to be read into
-# 3: Read data into dictionary
-# 4: Code the reminder portion of the program
-# 5: Configure the program to run when the machine starts and every x hours while the machine is active.
 
-# I'll need the datetime API for release dates and for telling hte program when to run
 
-books = {}
+def main():
+    dict_from_file()
+    #display_data()
+    #search_data()
+    #add_book()
+    check_dates()
+    # book = input("Name of book please.")
+    #remove_book(book)
+    early_reminder()
+
+
 
 def dict_from_file():
-    with open("Book_release_dates") as file:
+    with open('/home/pilot/PycharmProjects/PilotPyCharm/venv/Personal_Projects/Events') as file:
         for line in file.readlines():
-            month, day, year, *title = line.split()
-            books[str(title).lower().strip("[]").replace("'", "").replace(",", "")] = \
-                str(month) + "/" + str(day) + "/" + str(year)
-            # It's stripping from the ends of the string but not the stuff in the middle. How do I get it to
-            # take out ALL the commas and apostrophes?
-            # Answer: User .replace() instead of .strip(). .replace() takes out ALL of the specified character,
-            # while .strip() just removes the specified characters from the beginning and end of a string.
-
-    display_data()
+            release_date, *title = line.split()
+            events[str(title).lower().strip("[]").replace("'", "").replace(",", "")] = str(release_date)
+        for key, value in events.items():
+            dates.append(value)
 
 
-def display_data():
-    for key, value in books.items():
-        print(f"{key.title()} is due to be released {value}")
-        # It's storing the values as a tuple and that appears to be a problem.
-        # How can I get it to display the name without the brackets and apostrophe's
-        #       To do the above I used the .strip() method. There may be a more elegant way to accomplish
-        #       removing the apostrophes and brackets but for now I'm going with strip even though it looks
-        #       a bit clunky.
-        # How can I configure it so I can search the name without being forced to
-        # include brackets and apostrophe's.
-        #       One more, for the above I used .strip()
-        # So what do I really need to do here? Make it so the program can check the date and compare it to a list of
-        # dates, then if that date matches one of the values in the books dictionary, send a notification to the user.
+#def display_data():
+#    for key, value in books.items():
+#        print(f"{key.title()} is due to be released {value}")
 
-    while True:
-        book = input("What book are you searching for? Press 'q' to quit.").lower()
-        if book in books:
-            print(f"{book.title()} is due to be released {books[book]}")
-        elif book == 'q':
+
+#def search_data():
+#    while True:
+#        book = input("What book are you searching for? Press 'q' to quit.").lower()
+#        if book == 'q':
+#            break
+#        else:
+#            for key, value in books.items():
+#                if book in key:
+#                    print(f"{str(key)} is due to be released {str(books[key])}")
+#                else:
+#                    print(f"{str(book)} is not in the database. Perhaps check the spelling. Please use full names:"
+#                          f" Aoe Abercrombie rather than j abercrombie, etc.")
+#                    break
+
+
+def add_item(new_event, date):
+    with open('/home/pilot/PycharmProjects/PilotPyCharm/venv/Personal_Projects/Events', "a") as file:
+        events[new_event] = str(date)
+        file.write(str(date) + " " + str(new_event) + "\n")
+        #sys.stdout.flush()
+        #os.fsync(file.fileno())
+
+
+def remove_item(event):
+    for key, value in events.items():
+        if event in key:
+            events.pop(key)
+            rewrite_dict()
+            print(str(early_reminder()))
             break
-        else:
-            print(f"{book} is not in the database.")
 
 
-dict_from_file()
+def rewrite_dict():
+    with open('/home/pilot/PycharmProjects/PilotPyCharm/venv/Personal_Projects/Events', "w") as file:
+        for key, value in events.items():
+            file.writelines(f"{str(value)} {str(key).lower()}\n")
 
-# If I can get the keys to be displayed without the apostrophe's and commas, just as one uninterrupted string,
-# it may become possible for the program to perform the lookup function on the dictionary. Is the date stored as
-# one value? Or is it stored in multiple values each associated with one key? Is that relevant right now?
-# I need to get the keys to be searchable somehow, and then configure the program so that it automatically checks
-# the dates - which are stored as the values in the dictionary -  to determine if the release date is coming up.
-# That part shouldn't be too hard since I've done something similar to that before in a Birthday reminder app.
-# So the main thing now is making sure the VALUES are searchable, and that the keys will be displayed in a user-friendly
-# way. Then, configure the program to that new items can be added to the dictionary via the file containing the data.
-# It might also be good to add a feature that terminates items from the file if the user indicates they have made the
-# purchase or are no longer interested.
 
-# So for the immediate future:
-# 1: Make keys, values searchable
-# 2: Have the results displayed in a user-friendly way
-# 3: Automate the searches with datetime/device-startup
-# 4: Create an add-item feature
-# 5: Create a remove item feature that contains a prompt asking the user if they'd like to terminate the item.
-# 6: Move on to the more advanced 'For Later' features listed above.
+def check_dates():
+    with open('/home/pilot/PycharmProjects/PilotPyCharm/venv/Personal_Projects/Events', "r") as file:
+        flag = False
+        today = time.strftime('%m-%d-%y')
+        for line in file:
+            if today in line:
+                date, *event = line.split()
+                event1 = str(event).strip('[]').replace(",", "").replace("'", "").title()
+                flag = True
+                os.system(f'notify-send "{str(event1)} is occurring on: {str(date)}"')
+        if not flag:
+            os.system('notify-send "There are no upcoming events."')
 
-# Re-organizing
-# So, now I need to:
-# Create feature that adds new books and their release dates to the dictionary
-# Perform a reverse look-up where the dates from the dictionary are compiled into a list.
-# This list must be regularly compared with the dates, and if there is a match a notification must be sent to the user.
-# This checks needs to be scheduled to run automatically. Maybe on machine start-up and/or every 12 hours or so.
+
+def check_early_reminder():
+    with open('/home/pilot/PycharmProjects/PilotPyCharm/venv/Personal_Projects/EarlyReminder.txt', "r") as file:
+        today = time.strftime('%m-%d-%y')
+        for line in file:
+            if today in line:
+                date, *event = line.split()
+                event1 = str(event).strip('[]').replace(",", "").replace("'", "")
+                return f"{str(event1).title()} is in one week."
+
+
+def notification():
+    with open('/home/pilot/PycharmProjects/PilotPyCharm/venv/Personal_Projects/Events', "r") as file:
+        today = time.strftime('%m-%d-%y')
+        for line in file:
+            if today in line:
+                date, *event = line.split()
+                event1 = str(event).strip('[]').replace(",", "").replace("'", "")
+                return f"{str(event1).title()} is today."
+            #else:
+                #return f"No events today."
+
+
+def early_reminder():
+    with open("EarlyReminder.txt", "w") as file:
+        for key, value in events.items():
+            day_value = int(value[slice(3, 5)]) - 7
+            month_value = value[slice(0, 2)]
+            year_value = f"-{value[slice(6, 10)]}"
+            if int(day_value) <= 0:
+                month_value = int(month_value) - 1
+                if month_value == 2:
+                    day_value = int(day_value) + 28
+                    value3 = str(value_check(month_value)) + "-" + str(day_check(day_value)) + str(year_value)
+                    upcoming_events[key] = value3
+                if month_check(month_value):
+                    day_value = int(day_value) + 31
+                    value3 = str(value_check(month_value)) + "-" + str(day_check(day_value)) + str(year_value)
+                    upcoming_events[key] = value3
+                if month_check2(month_value):
+                    day_value = int(day_value) + 30
+                    value_check(month_value)
+                    value3 = str(value_check(month_value)) + str(day_check(day_value)) + str(year_value)
+                    upcoming_events[key] = value3
+            else:
+                value3 = str(value[slice(0, 2)]) + "-" + str(day_check(day_value)) + str(year_value)
+                upcoming_events[key] = value3
+
+        for key, value in upcoming_events.items():
+            file.writelines(f"{str(value)} {str(key)}\n")
+
+
+def value_check(value):
+    if int(value) == 12:
+        value = 1
+        return f"0{str(value)}"
+    if int(value) < 10:
+        return f"0{str(value)}"
+    else:
+        return str(value)
+
+
+def day_check(day):
+    if int(day) < 10:
+        return f"0{str(day)}"
+    else:
+        return f"{str(day)}"
+
+
+def month_check(month):
+    if month == 1:
+        return True
+    if month == 3:
+        return True
+    if month == 5:
+        return True
+    if month == 7:
+        return True
+    if month == 8:
+        return True
+    if month == 10:
+        return True
+    if month == 12:
+        return True
+    else:
+        return False
+
+
+def month_check2(month):
+    if month == 4:
+        return True
+    if month == 6:
+        return True
+    if month == 11:
+        return True
+    else:
+        return False
+
+
+main()
