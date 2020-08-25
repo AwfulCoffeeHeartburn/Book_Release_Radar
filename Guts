@@ -88,6 +88,7 @@ class event_radar:
         #    switch, message = check_early_reminder()
         #    self._message_box.showinfo("ATTENTION", f"{str(message)}")
 
+
     def create_priority_buttons(self):
         self._priority_frame = tkinter.Frame(self._to_do_frame)
         self._priority_frame.pack(side='top')
@@ -97,6 +98,7 @@ class event_radar:
         self._un_prioritize_btn = tkinter.Button(self._to_do_frame, text='Remove Priority',
                                                  command=self.remove_priority)
         self._un_prioritize_btn.pack(side='top', pady=5)
+
 
     def create_to_do_list(self):
         self._to_do_frame = tkinter.Frame(self._main_window)
