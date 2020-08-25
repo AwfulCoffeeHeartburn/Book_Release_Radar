@@ -1,9 +1,15 @@
 import os
 import time
+import sys
 from datetime import datetime
 
-books = {}
+PATH_TO_EVENTS = 'C:/Users/Stanl/PycharmProjects/pythonProject1/Prjoects/Release Radar/Events'
+PATH_TO_EARLY_REMINDER = 'C:/Users/Stanl/PycharmProjects/pythonProject1/Prjoects/Release Radar/EarlyReminder'
+
+events = {}
+upcoming_events = {}
 dates = []
+
 
 
 def main():
@@ -11,92 +17,183 @@ def main():
     #display_data()
     #search_data()
     #add_book()
-    check_dates()
+    #check_dates()
     # book = input("Name of book please.")
     #remove_book(book)
+    #early_reminder()
 
 
 
 def dict_from_file():
-    with open("Book_release_dates") as file:
+    with open(PATH_TO_EVENTS) as file:
         for line in file.readlines():
             release_date, *title = line.split()
-            books[str(title).lower().strip("[]").replace("'", "").replace(",", "")] = str(release_date)
-        for key, value in books.items():
+            events[str(title).lower().strip("[]").replace("'", "").replace(",", "")] = str(release_date)
+        for key, value in events.items():
             dates.append(value)
 
 
-#def display_data():
-#    for key, value in books.items():
-#        print(f"{key.title()} is due to be released {value}")
+'''
+def display_data():
+    for key, value in events.items():
+        print(f"{key.title()} is due to be released {value}")
 
 
-#def search_data():
-#    while True:
-#        book = input("What book are you searching for? Press 'q' to quit.").lower()
-#        if book == 'q':
-#            break
-#        else:
-#            for key, value in books.items():
-#                if book in key:
-#                    print(f"{str(key)} is due to be released {str(books[key])}")
-#                else:
-#                    print(f"{str(book)} is not in the database. Perhaps check the spelling. Please use full names:"
-#                          f" Aoe Abercrombie rather than j abercrombie, etc.")
-#                    break
+def search_data():
+    while True:
+        book = input("What book are you searching for? Press 'q' to quit.").lower()
+        if book == 'q':
+            break
+        else:
+            for key, value in events.items():
+                if book in key:
+                    print(f"{str(key)} is due to be released {str(events[key])}")
+                else:
+                    print(f"{str(book)} is not in the database. Perhaps check the spelling. Please use full names:"
+                          f" Aoe Abercrombie rather than j abercrombie, etc.")
+                    break
+'''
 
 
-def add_book(new_book, release_date):
-    with open("Book_release_dates", "a") as file:
-        #while True:
-        #    if new_book == 'q':
-        #        break
-        #    else:
-        #release_date = input("What is the release date of the book if known? Please enter as: mm-dd-yyyy")
-        books[new_book] = str(release_date)
-        file.write(str(release_date) + " " + str(new_book) + "\n")
-        dates.append(str(release_date))
+def add_item(new_event, date):
+    with open(PATH_TO_EVENTS, "a") as file:
+        events[new_event] = str(date)
+        file.write(str(date) + " " + str(new_event) + "\n")
+        #sys.stdout.flush()
+        #os.fsync(file.fileno())
 
 
-def remove_book(book):
-    for key, value in books.items():
-        if book in key:
-            books.pop(key)
+def remove_item(event):
+    for key, value in events.items():
+        if event in key:
+            events.pop(key)
             rewrite_dict()
+            print(str(early_reminder()))
             break
 
 
 def rewrite_dict():
-    with open("Book_release_dates", "w") as file:
-        for key, value in books.items():
+    with open(PATH_TO_EVENTS, "w") as file:
+        for key, value in events.items():
             file.writelines(f"{str(value)} {str(key).lower()}\n")
 
 
 def check_dates():
-    with open("Book_release_dates", "r") as file:
+    with open('/home/pilot/PycharmProjects/PilotPyCharm/venv/Personal_Projects/Events', "r") as file:
         flag = False
         today = time.strftime('%m-%d-%y')
-        birthday = time.strftime('%m-%d')
         for line in file:
             if today in line:
                 date, *event = line.split()
-                event1 = str(event).strip('[]').replace(",", "").replace("'", "")
+                event1 = str(event).strip('[]').replace(",", "").replace("'", "").title()
                 flag = True
                 os.system(f'notify-send "{str(event1)} is occurring on: {str(date)}"')
-                # The reasoning for the two separate if statements is this: Since the birth years on the list
-                # will never occur again the program can safely search the file according to month and date
-                # instead of according to month, date and year. Anything that is identified by just month
-                # and date can be assumed to be a birthday. Consequently, we can provide different messages this way.
-                # We can also include a few lines calculating the age of the individual in question.
-            if birthday in line:
+        if not flag:
+            os.system('notify-send "There are no upcoming events."')
+
+
+def check_early_reminder():
+    with open(PATH_TO_EARLY_REMINDER, "r") as file:
+        today = time.strftime('%m-%d-%y')
+        flag = False
+        for line in file:
+            if today in line:
                 flag = True
                 date, *event = line.split()
                 event1 = str(event).strip('[]').replace(",", "").replace("'", "")
-                year = datetime.now().year
-                age = int(year) - int(date[slice(6, 10)])
-                os.system(f"notify-send '{str(event1)} is coming up'.")
-        if not flag:
-            os.system('notify-send "There are no upcoming events."')
+                string = f"{str(event1).title()} is in one week."
+                return flag, string
+
+
+def notification():
+    with open(PATH_TO_EVENTS, "r") as file:
+        today = time.strftime('%m-%d-%y')
+        flag = False
+        for line in file:
+            if today in line:
+                flag = True
+                date, *event = line.split()
+                event1 = str(event).strip('[]').replace(",", "").replace("'", "")
+                string = f"{str(event1).title()} is today."
+                return flag, string
+            #else:
+                #return f"No events today."
+
+
+def early_reminder():
+    with open(PATH_TO_EARLY_REMINDER, "w") as file:
+        for key, value in events.items():
+            day_value = int(value[slice(3, 5)]) - 7
+            month_value = value[slice(0, 2)]
+            year_value = f"-{value[slice(6, 10)]}"
+            if int(day_value) <= 0:
+                month_value = int(month_value) - 1
+                if month_value == 2:
+                    day_value = int(day_value) + 28
+                    value3 = str(value_check(month_value)) + "-" + str(day_check(day_value)) + str(year_value)
+                    upcoming_events[key] = value3
+                if month_check(month_value):
+                    day_value = int(day_value) + 31
+                    value3 = str(value_check(month_value)) + "-" + str(day_check(day_value)) + str(year_value)
+                    upcoming_events[key] = value3
+                if month_check2(month_value):
+                    day_value = int(day_value) + 30
+                    value_check(month_value)
+                    value3 = str(value_check(month_value)) + str(day_check(day_value)) + str(year_value)
+                    upcoming_events[key] = value3
+            else:
+                value3 = str(value[slice(0, 2)]) + "-" + str(day_check(day_value)) + str(year_value)
+                upcoming_events[key] = value3
+
+        for key, value in upcoming_events.items():
+            file.writelines(f"{str(value)} {str(key)}\n")
+
+
+def value_check(value):
+    if int(value) == 12:
+        value = 1
+        return f"0{str(value)}"
+    if int(value) < 10:
+        return f"0{str(value)}"
+    else:
+        return str(value)
+
+
+def day_check(day):
+    if int(day) < 10:
+        return f"0{str(day)}"
+    else:
+        return f"{str(day)}"
+
+
+def month_check(month):
+    if month == 1:
+        return True
+    if month == 3:
+        return True
+    if month == 5:
+        return True
+    if month == 7:
+        return True
+    if month == 8:
+        return True
+    if month == 10:
+        return True
+    if month == 12:
+        return True
+    else:
+        return False
+
+
+def month_check2(month):
+    if month == 4:
+        return True
+    if month == 6:
+        return True
+    if month == 11:
+        return True
+    else:
+        return False
 
 
 main()
