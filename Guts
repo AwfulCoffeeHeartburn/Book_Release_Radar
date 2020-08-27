@@ -140,10 +140,15 @@ class event_radar:
         self._to_do_entry.delete(0, 'end')
         self._title_entry.delete(0, 'end')
         self._release_entry.delete(0, 'end')
+        
+    def auto_colors(self):
+        for num in to_do_colors:
+            self._to_do_box.itemconfig(int(num), {'bg': 'red'})
 
     def urgency_colors(self):
         selection = self._to_do_box.curselection()
         index = int(selection[0])
+        save_colors(index)
         self._to_do_box.itemconfig(int(index), {'bg': 'red'})
 
     def remove_priority(self):
