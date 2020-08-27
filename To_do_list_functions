@@ -38,3 +38,17 @@ def rewrite_dict():
         for key, value in to_do_list.items():
             file.writelines(f"{str(value)} {str(key).lower()}\n")
 
+def load_colors():
+    with open(PATH_TO_COLORS) as file:
+        for item in file:
+            to_do_colors.append(int(item))
+        # print(str(to_do_colors))
+
+
+def save_colors(number):
+    print(str(number))
+    to_do_colors.append(number)
+    with open(PATH_TO_COLORS, "a") as file:
+        file.write(f"{str(number)}\n")
+        
+main()
