@@ -51,4 +51,13 @@ def save_colors(number):
     with open(PATH_TO_COLORS, "a") as file:
         file.write(f"{str(number)}\n")
         
+        
+def remove_colors(number):
+    print(str(number))
+    if int(number) in to_do_colors:
+        to_do_colors.remove(number)
+    with open(PATH_TO_COLORS, "w") as file:
+        for item in to_do_colors:
+            file.write(f"{str(item).lower()}\n")
+        
 main()
