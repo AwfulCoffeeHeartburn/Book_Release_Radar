@@ -9,7 +9,7 @@ Early reminder pop-up windows, allowing the user to select how early they'd like
 Time, allowing the user to specify times of events rather than just dates.
 
 Bugs to be fixed:
-Prioritze function causes program to crash if the textfile containing the indexes of the priorities is empty.
+Removing an item from the list causes all priorities to disappear and upsets the indexes used to store priorities.
 Early reminder pop-up windows either cause crashes or don't run.
 Can't add and remove the same item during the same session.
 Reminder pop-up windows don't display every event that day, only the first event it comes in contact with.
