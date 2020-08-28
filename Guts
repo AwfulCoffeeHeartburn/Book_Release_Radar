@@ -154,4 +154,5 @@ class event_radar:
     def remove_priority(self):
         selection = self._to_do_box.curselection()
         index = int(selection[0])
+        remove_colors(index)
         self._to_do_box.itemconfig(int(index), {'bg': 'white'})
