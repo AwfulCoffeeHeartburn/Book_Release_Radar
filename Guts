@@ -19,6 +19,7 @@ class event_radar:
         self.create_to_do_btns()
         self.add_to_to_do()
         self.event_alert()
+        self.auto_colors()
 
         self._main_window.mainloop()
 
@@ -56,16 +57,6 @@ class event_radar:
         self._release_entry = tkinter.Entry(self._title_frame)
         self._release_entry.pack(pady=15, padx=15, side='right')
 
-    '''
-    def add_author(self):
-        self._author_frame = tkinter.Frame(self._main_window)
-        self._author_frame.pack(side='right')
-        self._author_label = tkinter.Label(self._author_frame, text="Author Name:")
-        self._author_label.pack()
-        self._author_entry = tkinter.Entry(self._author_frame)
-        self._author_entry.pack(pady=15, padx=15)
-    '''
-
     def add_to_dictionary(self):
         key = str(self._title_entry.get())
         value = str(self._release_entry.get())
@@ -88,7 +79,6 @@ class event_radar:
         #    switch, message = check_early_reminder()
         #    self._message_box.showinfo("ATTENTION", f"{str(message)}")
 
-
     def create_priority_buttons(self):
         self._priority_frame = tkinter.Frame(self._to_do_frame)
         self._priority_frame.pack(side='top')
@@ -98,7 +88,6 @@ class event_radar:
         self._un_prioritize_btn = tkinter.Button(self._to_do_frame, text='Remove Priority',
                                                  command=self.remove_priority)
         self._un_prioritize_btn.pack(side='top', pady=5)
-
 
     def create_to_do_list(self):
         self._to_do_frame = tkinter.Frame(self._main_window)
@@ -141,12 +130,19 @@ class event_radar:
         self._title_entry.delete(0, 'end')
         self._release_entry.delete(0, 'end')
 
+    def auto_colors(self):
+        for num in to_do_colors:
+            self._to_do_box.itemconfig(int(num), {'bg': 'red'})
+
     def urgency_colors(self):
         selection = self._to_do_box.curselection()
+        name = self._to_do_box.get(self._to_do_box.curselection())
         index = int(selection[0])
+        save_colors(index)
         self._to_do_box.itemconfig(int(index), {'bg': 'red'})
 
     def remove_priority(self):
         selection = self._to_do_box.curselection()
         index = int(selection[0])
+        remove_colors(index)
         self._to_do_box.itemconfig(int(index), {'bg': 'white'})
