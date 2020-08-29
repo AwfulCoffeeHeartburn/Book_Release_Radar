@@ -1,0 +1,82 @@
+import os
+import time
+
+PATH_TO_TODO_LIST = 'C:/Users/Stanl/PycharmProjects/pythonProject1/Prjoects/Release Radar/to_do'
+PATH_TO_COLORS = 'C:/Users/Stanl/PycharmProjects/pythonProject1/Prjoects/Release Radar/colors'
+PATH_TO_NAMES = 'C:/Users/Stanl/PycharmProjects/pythonProject1/Prjoects/Release Radar/priorities'
+
+to_do_list = []
+to_do_colors = []
+priority_names = []
+
+
+def main():
+    items_from_file()
+    load_colors()
+    #load_priorities()
+
+
+def items_from_file():
+    with open(PATH_TO_TODO_LIST) as file:
+        for line in file.readlines():
+            task = line.split()
+            task1 = str(task).strip("[]").replace(",", "").replace("'", "").replace("[]", "")
+            to_do_list.append(task1)
+
+
+def add_to_do(new_event):
+    with open(PATH_TO_TODO_LIST, "a") as file:
+        to_do_list.append(str(new_event))
+        file.write(str(new_event) + "\n")
+
+
+def remove_to_do(event):
+    for thing in to_do_list:
+        if event == thing:
+            to_do_list.remove(event)
+    rewrite_list()
+
+
+def rewrite_list():
+    with open(PATH_TO_TODO_LIST, "w") as file:
+        for item in to_do_list:
+            file.write(f"{str(item).lower()}\n")
+
+
+def load_colors():
+    with open(PATH_TO_COLORS) as file:
+        for line in file:
+            to_do_colors.append(int(line))
+
+
+'''
+def load_priorities():
+    with open(PATH_TO_NAMES) as file:
+        for item in file:
+            priority_names.append(str(item))
+'''
+
+
+def save_colors(number):
+    to_do_colors.append(number)
+    with open(PATH_TO_COLORS, "a") as file:
+        file.write(f"{str(number)}\n")
+
+
+'''
+def save_priority(name):
+    priority_names.append(name)
+    with open(PATH_TO_NAMES, "a") as file:
+        file.write(f"{str(name)}\n")
+'''
+
+
+def remove_colors(number):
+    if int(number) in to_do_colors:
+        to_do_colors.remove(number)
+    with open(PATH_TO_COLORS, "w") as file:
+        for item in to_do_colors:
+            file.write(f"{str(item).lower()}\n")
+
+
+main()
