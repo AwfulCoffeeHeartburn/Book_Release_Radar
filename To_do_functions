@@ -7,8 +7,6 @@ PATH_TO_NAMES = 'C:/Users/Stanl/PycharmProjects/pythonProject1/Prjoects/Release 
 
 to_do_list = []
 to_do_colors = []
-priority_names = []
-
 
 def main():
     items_from_file()
@@ -49,26 +47,10 @@ def load_colors():
             to_do_colors.append(int(line))
 
 
-'''
-def load_priorities():
-    with open(PATH_TO_NAMES) as file:
-        for item in file:
-            priority_names.append(str(item))
-'''
-
-
 def save_colors(number):
     to_do_colors.append(number)
     with open(PATH_TO_COLORS, "a") as file:
         file.write(f"{str(number)}\n")
-
-
-'''
-def save_priority(name):
-    priority_names.append(name)
-    with open(PATH_TO_NAMES, "a") as file:
-        file.write(f"{str(name)}\n")
-'''
 
 
 def remove_colors(number):
